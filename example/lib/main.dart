@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -31,6 +31,13 @@ class _MyAppState extends State<MyApp> {
     File file = File(image.path);
 
     final int imageSize = await file.length();
+    final bytes = await file.readAsBytes();
+
+    print('Image bytes: $bytes');
+    print('bytes length: ${bytes.length}');
+
+    final base64Image = base64Encode(bytes);
+    print('Base64 representation: ${base64Image.substring(0, 100)}...'); // Print the first 100 characters
 
     print('Image Path: ${image.path}');
     print('Image Size: $imageSize');
@@ -83,6 +90,8 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              FilledButton(onPressed: () {}, child: Text('')),
             ],
           ),
         ),
