@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _analyseImageWithGemini() async {
     final result = await SmartVision.analyzeImage(
     imageFile: _selectedImage!,
+    provider: VisionProvider.gemini,
     apiKey: apiKey!,
   );
 
