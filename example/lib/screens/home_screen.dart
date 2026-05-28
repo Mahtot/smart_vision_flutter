@@ -9,6 +9,8 @@ import 'package:example/widgets/actions_buttons_widget.dart';
 import 'package:example/widgets/gemini_response_widget.dart';
 import 'package:example/widgets/image_preview_widget.dart';
 
+import 'package:smart_vision_flutter/smart_vision_flutter.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _geminiResponse;
 
   bool _isLoading = false;
+  String? apiKey = dotenv.env['GEMINI_API_KEY'];
 
   Future<void> _pickImage(ImageSource source) async {
     final image = await _imagePicker.pickImage(source: source);
@@ -49,65 +52,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _analyseImageWithGemini() async {
-    if (_base64Image == null) {
-      debugPrint('No image selected.');
-      return;
-    }
+    final result = await SmartVision.analyzeImage(
+    imageFile: _selectedImage!,
+    apiKey: apiKey!,
+  );
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
-
-    final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=$apiKey',
-    );
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'contents': [
-            {
-              'parts': [
-                {'text': _prompt},
-                {
-                  'inline_data': {
-                    'mime_type': 'image/jpeg',
-                    'data': _base64Image,
-                  },
-                },
-              ],
-            },
-          ],
-        }),
-      );
-
-      debugPrint('Status code: ${response.statusCode}');
-      debugPrint('Response body: ${response.body}');
-
-      if (response.statusCode != 200) {
-        debugPrint('Gemini request failed.');
-        return;
-      }
-
-      final data = jsonDecode(response.body);
-
-      final text = data['candidates'][0]['content']['parts'][0]['text'];
-
-      setState(() {
-        _geminiResponse = text;
-      });
-    } catch (e) {
-      debugPrint('Error: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  setState(() {
+    _geminiResponse = result.description;
+  });
+   
   }
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
