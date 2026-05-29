@@ -44,8 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    final apiKey = dotenv.env['HUGGINGFACE_API_KEY'];
-    debugPrint('API KEY: $apiKey');
+    final apiKey = dotenv.env['GEMINI_API_KEY'];
 
     if (apiKey == null || apiKey.trim().isEmpty) {
       debugPrint(' API key is missing.');
@@ -59,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final result = await SmartVision.analyzeImage(
         imageFile: _selectedImage!,
-        provider: VisionProvider.huggingFace,
+        provider: VisionProvider.gemini,
         apiKey: apiKey,
       );
 

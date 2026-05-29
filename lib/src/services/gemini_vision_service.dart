@@ -9,7 +9,7 @@ import '../models/vision_result.dart';
 import 'vision_service_interface.dart';
 
 class GeminiVisionService implements VisionServiceInterface {
-  static const String _model = 'gemini-3.1-flash-lite';
+  static const String _model = 'gemini-2.0-flash';
   static const Duration _timeout = Duration(seconds: 30);
 
   @override
@@ -17,7 +17,7 @@ class GeminiVisionService implements VisionServiceInterface {
     required String apiKey,
     required String prompt,
     required String base64Image,
-     String mimeType= 'image/jpeg',
+    String mimeType = 'image/jpeg',
   }) async {
     final url = Uri.parse(
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent?key=$apiKey',
@@ -57,7 +57,9 @@ class GeminiVisionService implements VisionServiceInterface {
       }
 
       if (response.statusCode == 429) {
-        throw VisionException('Gemini quota exceeded or too many requests.');
+        throw VisionException(
+          'Gemini free tier limit reached. Please wait a moment and try again.',
+        );
       }
 
       if (response.statusCode != 200) {
@@ -68,13 +70,25 @@ class GeminiVisionService implements VisionServiceInterface {
 
       final data = jsonDecode(response.body);
 
-      final text = data['candidates']?[0]?['content']?['parts']?[0]?['text'];
+      final candidates = data['candidates'];
+
+      if (candidates == null || candidates.isEmpty) {
+        throw VisionException('Gemini returned no candidates.');
+      }
+
+      final parts = candidates[0]?['content']?['parts'];
+
+      if (parts == null || parts.isEmpty) {
+        throw VisionException('Gemini returned no content parts.');
+      }
+
+      final text = parts[0]?['text'];
 
       if (text == null || text.toString().trim().isEmpty) {
         throw VisionException('Gemini returned an empty response.');
       }
 
-      return VisionResult(description: text);
+      return VisionResult(description: text.toString().trim());
     } on SocketException {
       throw VisionException('No internet connection.');
     } on TimeoutException {
