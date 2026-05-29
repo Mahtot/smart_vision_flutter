@@ -1,15 +1,23 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:http/http.dart' as http;
-
-import '../exceptions/vision_exception.dart';
-import '../models/vision_provider.dart';
-import '../models/vision_result.dart';
+import 'package:smart_vision_flutter/smart_vision_flutter.dart';
+import 'package:smart_vision_flutter/src/services/claude_vision_service.dart';
+import 'package:smart_vision_flutter/src/services/gemini_vision_service.dart';
+import 'package:smart_vision_flutter/src/services/huggingface_vision_service.dart';
+import 'package:smart_vision_flutter/src/services/openai_vision_service.dart';
+import 'package:smart_vision_flutter/src/services/vision_service_interface.dart';
 
 class SmartVision {
-  static const String _geminiModel = 'gemini-3.1-flash-lite';
+  static String _getMimeType(String path) {
+    final ext = path.split('.').last.toLowerCase();
+    const map = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'webp': 'image/webp',
+    };
+    return map[ext] ?? 'image/jpeg';
+  }
 
   static Future<VisionResult> analyzeImage({
     required File imageFile,
@@ -21,6 +29,10 @@ class SmartVision {
       throw VisionException('API key cannot be empty.');
     }
 
+    if (prompt.trim().isEmpty) {
+      throw VisionException('Prompt cannot be empty.');
+    }
+
     if (!await imageFile.exists()) {
       throw VisionException('Image file does not exist.');
     }
@@ -30,93 +42,27 @@ class SmartVision {
     if (bytes.isEmpty) {
       throw VisionException('Image file is empty.');
     }
+    if (bytes.length > 4 * 1024 * 1024) {
+      throw VisionException(
+        'Image is too large. Please use an image under 4MB.',
+      );
+    }
 
     final base64Image = base64Encode(bytes);
+    final mimeType = _getMimeType(imageFile.path);
 
-    switch (provider) {
-      case VisionProvider.gemini:
-        return _analyzeWithGemini(
-          apiKey: apiKey,
-          prompt: prompt,
-          base64Image: base64Image,
-        );
+    final VisionServiceInterface service = switch (provider) {
+      VisionProvider.gemini => GeminiVisionService(),
+      VisionProvider.openAI => OpenaiVisionService(),
+      VisionProvider.claude => ClaudeVisionService(),
+      VisionProvider.huggingFace => HuggingFaceVisionService(),
+    };
 
-      case VisionProvider.openAI:
-        throw VisionException('OpenAI support coming soon.');
-
-      case VisionProvider.claude:
-        throw VisionException('Claude support coming soon.');
-
-      case VisionProvider.huggingFace:
-        throw VisionException('HuggingFace support coming soon.');
-    }
-  }
-
-  static Future<VisionResult> _analyzeWithGemini({
-    required String apiKey,
-    required String prompt,
-    required String base64Image,
-  }) async {
-    final url = Uri.parse(
-      'https://generativelanguage.googleapis.com/v1beta/models/$_geminiModel:generateContent?key=$apiKey',
+    return service.analyzeImage(
+      apiKey: apiKey,
+      prompt: prompt,
+      base64Image: base64Image,
+      mimeType: mimeType,
     );
-
-    try {
-      final response = await http
-          .post(
-            url,
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({
-              'contents': [
-                {
-                  'parts': [
-                    {'text': prompt},
-                    {
-                      'inline_data': {
-                        'mime_type': 'image/jpeg',
-                        'data': base64Image,
-                      },
-                    },
-                  ],
-                },
-              ],
-            }),
-          )
-          .timeout(const Duration(seconds: 30));
-
-      if (response.statusCode == 400) {
-        throw VisionException(
-          'Bad request. Check image format or request body.',
-        );
-      }
-
-      if (response.statusCode == 401 || response.statusCode == 403) {
-        throw VisionException('Invalid or unauthorized API key.');
-      }
-
-      if (response.statusCode == 429) {
-        throw VisionException('Quota exceeded or too many requests.');
-      }
-
-      if (response.statusCode != 200) {
-        throw VisionException(
-          'Gemini request failed with status ${response.statusCode}: ${response.body}',
-        );
-      }
-
-      final data = jsonDecode(response.body);
-
-      final mappedJson = {
-        'description': data['candidates'][0]['content']['parts'][0]['text'],
-      };
-
-      return VisionResult.fromJson(mappedJson);
-    } on SocketException {
-      throw VisionException('No internet connection.');
-    } on TimeoutException {
-      throw VisionException('Request timed out. Please try again.');
-    } on FormatException {
-      throw VisionException('Invalid response format from Gemini.');
-    }
   }
 }

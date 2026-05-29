@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class GeminiResponseWidget extends StatelessWidget {
-  final String? geminiResponse;
+class AnalysisResultWidget extends StatelessWidget {
+  final String? analysisResult;
 
-  const GeminiResponseWidget({
+  const AnalysisResultWidget({
     super.key,
-    required this.geminiResponse,
+    required this.analysisResult,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (geminiResponse == null) {
+    if (analysisResult == null) {
       return const SizedBox.shrink();
     }
 
@@ -19,7 +19,7 @@ class GeminiResponseWidget extends StatelessWidget {
         width: 320,
         padding: const EdgeInsets.all(16),
         child: Text(
-          geminiResponse!,
+          analysisResult!,
           style: const TextStyle(fontSize: 16),
         ),
       ),
