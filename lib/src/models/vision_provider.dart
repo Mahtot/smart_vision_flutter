@@ -1,6 +1,6 @@
 enum VisionProvider {
   gemini,
-  openAI,
+  openAi,
   claude,
   huggingFace,
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:smart_vision_flutter/smart_vision_flutter.dart';
+import 'package:smart_vision_flutter/src/models/vision_config.dart';
 import 'package:smart_vision_flutter/src/services/claude_vision_service.dart';
 import 'package:smart_vision_flutter/src/services/gemini_vision_service.dart';
 import 'package:smart_vision_flutter/src/services/huggingface_vision_service.dart';
@@ -8,6 +9,10 @@ import 'package:smart_vision_flutter/src/services/openai_vision_service.dart';
 import 'package:smart_vision_flutter/src/services/vision_service_interface.dart';
 
 class SmartVision {
+  final VisionConfig config;
+
+  const SmartVision({required this.config});
+
   static String _getMimeType(String path) {
     final ext = path.split('.').last.toLowerCase();
     const map = {
@@ -19,12 +24,10 @@ class SmartVision {
     return map[ext] ?? 'image/jpeg';
   }
 
-  static Future<VisionResult> analyzeImage({
-    required File imageFile,
-    required String apiKey,
-    required VisionProvider provider,
-    String prompt = 'Describe this image briefly.',
-  }) async {
+  Future<VisionResult> analyzeImage({required File imageFile}) async {
+    final apiKey = config.apiKey;
+    final provider = config.provider;
+    final prompt = config.prompt;
     if (apiKey.trim().isEmpty) {
       throw VisionException('API key cannot be empty.');
     }
@@ -53,7 +56,7 @@ class SmartVision {
 
     final VisionServiceInterface service = switch (provider) {
       VisionProvider.gemini => GeminiVisionService(),
-      VisionProvider.openAI => OpenaiVisionService(),
+      VisionProvider.openAi => OpenaiVisionService(),
       VisionProvider.claude => ClaudeVisionService(),
       VisionProvider.huggingFace => HuggingFaceVisionService(),
     };

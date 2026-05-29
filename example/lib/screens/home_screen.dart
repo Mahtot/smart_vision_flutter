@@ -56,11 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     try {
-      final result = await SmartVision.analyzeImage(
-        imageFile: _selectedImage!,
-        provider: VisionProvider.gemini,
-        apiKey: apiKey,
+      final vision = SmartVision(
+        config: VisionConfig(apiKey: apiKey, provider: VisionProvider.gemini),
       );
+
+      final result = await vision.analyzeImage(imageFile: _selectedImage!);
 
       setState(() {
         _analysisResult = result.description;
