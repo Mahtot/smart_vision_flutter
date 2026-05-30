@@ -1,9 +1,16 @@
 name: smart_vision_flutter
 description: A Flutter package for AI-powered image analysis with Gemini and future multi-provider support.
 version: 0.0.1
-repository: https://github.com/mahtot/smart_vision_flutter
-homepage: https://github.com/mahtot/smart_vision_flutter
-issue_tracker: https://github.com/mahtot/smart_vision_flutter/issues
+repository: https://github.com/Mahtot/smart_vision_flutter
+homepage: https://github.com/Mahtot/smart_vision_flutter
+issue_tracker: https://github.com/Mahtot/smart_vision_flutter/issues
+
+topics:
+  - ai
+  - vision
+  - gemini
+  - flutter
+  - machine-learning
 
 environment:
   sdk: ^3.10.4
@@ -12,7 +19,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_dotenv: ^6.0.1
   http: ^1.6.0
 
 dev_dependencies:
