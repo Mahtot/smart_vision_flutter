@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:smart_vision_flutter/smart_vision_flutter.dart';
-import 'package:smart_vision_flutter/src/models/vision_config.dart';
 import 'package:smart_vision_flutter/src/services/claude_vision_service.dart';
 import 'package:smart_vision_flutter/src/services/gemini_vision_service.dart';
 import 'package:smart_vision_flutter/src/services/huggingface_vision_service.dart';

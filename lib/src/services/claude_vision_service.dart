@@ -7,7 +7,7 @@ class ClaudeVisionService implements VisionServiceInterface {
     required String apiKey,
     required String prompt,
     required String base64Image,
-    String mimeType = 'image/jpeg'
+    String mimeType = 'image/jpeg',
   }) async {
     throw VisionException(
       'Claude support coming soon. Follow updates at pub.dev/packages/smart_vision_flutter',

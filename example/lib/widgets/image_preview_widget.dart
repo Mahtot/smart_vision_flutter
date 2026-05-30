@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 class ImagePreviewWidget extends StatelessWidget {
   final File? selectedImage;
 
-  const ImagePreviewWidget({
-    super.key,
-    required this.selectedImage,
-  });
+  const ImagePreviewWidget({super.key, required this.selectedImage});
 
   @override
   Widget build(BuildContext context) {

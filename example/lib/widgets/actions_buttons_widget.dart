@@ -4,10 +4,7 @@ import 'package:image_picker/image_picker.dart';
 class ActionButtonsWidget extends StatelessWidget {
   final void Function(ImageSource source) onPickImage;
 
-  const ActionButtonsWidget({
-    super.key,
-    required this.onPickImage,
-  });
+  const ActionButtonsWidget({super.key, required this.onPickImage});
 
   @override
   Widget build(BuildContext context) {

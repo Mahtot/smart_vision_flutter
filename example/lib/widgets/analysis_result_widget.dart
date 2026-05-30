@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class AnalysisResultWidget extends StatelessWidget {
   final String? analysisResult;
 
-  const AnalysisResultWidget({
-    super.key,
-    required this.analysisResult,
-  });
+  const AnalysisResultWidget({super.key, required this.analysisResult});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +15,7 @@ class AnalysisResultWidget extends StatelessWidget {
       child: Container(
         width: 320,
         padding: const EdgeInsets.all(16),
-        child: Text(
-          analysisResult!,
-          style: const TextStyle(fontSize: 16),
-        ),
+        child: Text(analysisResult!, style: const TextStyle(fontSize: 16)),
       ),
     );
   }

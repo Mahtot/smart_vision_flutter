@@ -1,6 +1,1 @@
-enum VisionProvider {
-  gemini,
-  openAi,
-  claude,
-  huggingFace,
-}
+enum VisionProvider { gemini, openAi, claude, huggingFace }

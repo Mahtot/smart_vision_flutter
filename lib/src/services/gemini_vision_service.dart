@@ -9,7 +9,7 @@ import '../models/vision_result.dart';
 import 'vision_service_interface.dart';
 
 class GeminiVisionService implements VisionServiceInterface {
-  static const String _model = 'gemini-2.0-flash';
+  static const String _model = 'gemini-3.1-flash-lite';
   static const Duration _timeout = Duration(seconds: 30);
 
   @override

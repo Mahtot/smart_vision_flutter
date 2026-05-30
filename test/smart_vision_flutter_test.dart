@@ -1,12 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:smart_vision_flutter/smart_vision_flutter.dart';
 
 void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
+  test('VisionConfig stores config values correctly', () {
+    const config = VisionConfig(
+      apiKey: 'test-key',
+      provider: VisionProvider.gemini,
+      prompt: 'Describe image',
+    );
+
+    expect(config.apiKey, 'test-key');
+    expect(config.provider, VisionProvider.gemini);
+    expect(config.prompt, 'Describe image');
   });
 }
