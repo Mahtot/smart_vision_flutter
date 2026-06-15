@@ -334,4 +334,4 @@ MIT License
 
 ---
 
-Built with ❤️ for Flutter developers.
+Built with ❤️ for Flutter developers by Mahtot
