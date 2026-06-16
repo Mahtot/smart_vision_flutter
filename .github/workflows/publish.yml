@@ -28,6 +28,9 @@ jobs:
       - name: Check formatting
         run: dart format --set-exit-if-changed .
 
+      - name: Create temporary .env
+        run: touch example/.env
+
       - name: Analyze package
         run: flutter analyze
 
